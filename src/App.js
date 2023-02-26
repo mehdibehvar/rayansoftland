@@ -1,5 +1,6 @@
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
+import { SnackbarProvider } from 'notistack';
 // routes
 import Router from './routes';
 // theme
@@ -10,11 +11,14 @@ import ScrollToTop from './components/scroll-to-top';
 import AuthProvider from './contexts/authContext';
 import SettingProvider from './contexts/settingContext';
 
+
+
 // ----------------------------------------------------------------------
 
 export default function App() {
   return (
-    <SettingProvider>
+    <SnackbarProvider anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <SettingProvider>
          <AuthProvider>
     <HelmetProvider>
         <BrowserRouter>
@@ -27,6 +31,8 @@ export default function App() {
       </HelmetProvider>
        </AuthProvider>
     </SettingProvider>
+    </SnackbarProvider>
+  
      
   );
 }

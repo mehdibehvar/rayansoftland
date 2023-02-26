@@ -16,17 +16,20 @@ import { Grid, Container, Typography, Box, Button } from '@mui/material';
 
 // sections
 
-
+import { useSnackbar } from "notistack";
 
 import { authContext } from '../contexts/authContext';
 import { deletePost, getPosts } from '../utils/httpclient';
 import EditPostModal from '../components/EditPostModal';
 
+
+
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {
   const theme = useTheme();
-  const [rows, setRows] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
+  const [rows, setRows] = useState(null);
 const {state}=useContext(authContext);
 
 useEffect(() => {
@@ -39,12 +42,14 @@ getPostsFun();
 }, [])
 
 const handleDeletePost=async(id)=>{
-const delPostFun=async()=>{
   const res=await deletePost(id);
   const response=await getPosts();
   setRows(response.slice(0,20));
-};
-delPostFun();
+  enqueueSnackbar(`post with Id: ${id} deleted...`, {
+    variant: "success",
+    autoHideDuration: 2000,
+  });
+
 }
   return (
     <>
@@ -72,7 +77,7 @@ delPostFun();
         
           </TableRow>
         </TableHead>
-        <TableBody>
+        {rows?<TableBody>
           {rows.map((row) => (
             <TableRow
               key={row.id}
@@ -96,7 +101,8 @@ delPostFun();
               </TableCell>
             </TableRow>
           ))}
-        </TableBody>
+        </TableBody>:<Typography variant="h4" sx={{color:"red"}}>loading......</Typography>}
+      
       </Table>
     </TableContainer>
           </Grid>
