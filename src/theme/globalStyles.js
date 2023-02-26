@@ -1,14 +1,20 @@
 // @mui
 import { GlobalStyles as MUIGlobalStyles } from '@mui/material';
+import { useContext } from 'react';
+import { settingContext } from '../contexts/settingContext';
+
+
 
 // ----------------------------------------------------------------------
 
 export default function GlobalStyles() {
+  const {state} = useContext(settingContext);
   const inputGlobalStyles = (
     <MUIGlobalStyles
       styles={{
         '*': {
           boxSizing: 'border-box',
+        direction:state.direction
         },
         html: {
           margin: 0,

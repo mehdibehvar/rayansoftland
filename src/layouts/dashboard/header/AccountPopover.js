@@ -1,9 +1,23 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 // @mui
 import { alpha } from '@mui/material/styles';
-import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
+import {
+  Box,
+  Divider,
+  Typography,
+  Stack,
+  MenuItem,
+  Avatar,
+  IconButton,
+  Popover,
+  ToggleButtonGroup,
+  ToggleButton,
+} from '@mui/material';
 // mocks_
 import account from '../../../_mock/account';
+import { settingActionType, settingContext } from '../../../contexts/settingContext';
+import { actionType, authContext } from '../../../contexts/authContext';
+import { removeItem } from '../../../utils/storage.service';
 
 // ----------------------------------------------------------------------
 
@@ -26,15 +40,32 @@ const MENU_OPTIONS = [
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
-
+const {dispatch} = useContext(settingContext);
+const {dispatch:authDispatch} = useContext(authContext);
+  const [alignment, setAlignment] =useState('ltr');
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
-
-  const handleClose = () => {
+const handleClose=()=>{
+  setOpen(null);
+}
+  const handleLogout = () => {
+    authDispatch({
+      type:actionType.logout
+    });
+    removeItem("email")
     setOpen(null);
   };
 
+
+  const handleChange = (event, newAlignment) => {
+
+    setAlignment(newAlignment);
+    dispatch({
+      type:settingActionType.toggle_direction,
+      payload:newAlignment
+    })
+  };
   return (
     <>
       <IconButton
@@ -97,9 +128,24 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem onClick={handleClose} sx={{ m: 1 }}>
+        <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
           Logout
         </MenuItem>
+        <Divider sx={{ borderStyle: 'dashed' }} />
+        <MenuItem >
+        <ToggleButtonGroup
+      color="primary"
+      value={alignment}
+      exclusive
+      onChange={handleChange}
+      aria-label="Platform"
+    >
+      <ToggleButton value="ltr">ltr</ToggleButton>
+  
+      <ToggleButton value="rtl">rtl</ToggleButton>
+    </ToggleButtonGroup>
+        </MenuItem>
+       
       </Popover>
     </>
   );
